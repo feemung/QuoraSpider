@@ -5,7 +5,7 @@ import com.feemung.quoraspider.spider.fetcher.quora.*;
 
 import com.feemung.quoraspider.spider.login.LoginWebDriverUtils;
 import com.feemung.quoraspider.spider.login.quora.CheckLoginStatus;
-import org.apache.http.impl.execchain.RetryExec;
+
 import org.jsoup.Jsoup;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -157,7 +157,7 @@ public class ChromeDriverFetcher {
         this.online = online;
     }
     public void closeAllLogger(){
-        Logger logger = Logger.getLogger(RetryExec.class.getName());
-        logger.setLevel(Level.OFF);
+        //Logger logger = Logger.getLogger(RetryExec.class.getName());
+        //logger.setLevel(Level.OFF);
     }
 }

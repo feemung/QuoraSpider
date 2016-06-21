@@ -55,6 +55,7 @@ public class ChromeDriverFetcherUtils2{
         }
     }
     public static ChromeDriverFetcherUtils2 getChromeDriverFetcher(String mode){
+
         if(threadMap.size()==0){
             try {
                 createAndStartService();

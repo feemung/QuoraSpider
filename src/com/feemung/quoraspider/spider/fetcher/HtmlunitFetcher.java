@@ -27,6 +27,7 @@ import java.util.logging.Level;
 /**
  * Created by feemung on 16/4/25.
  */
+
 public class HtmlunitFetcher {
 
     public static String donwload(String url)throws Exception{
