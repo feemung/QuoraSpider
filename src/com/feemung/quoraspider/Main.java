@@ -2,11 +2,14 @@ package com.feemung.quoraspider;
 
 import com.feemung.quoraspider.Log.LogFM;
 import com.feemung.quoraspider.Utils.FileUtils;
+import com.feemung.quoraspider.Utils.TimeStamp;
 import com.feemung.quoraspider.entry.Answer;
 import com.feemung.quoraspider.entry.UserInfo;
 import com.feemung.quoraspider.spider.DefaultMaskMaster;
 import com.feemung.quoraspider.spider.entry.HTMLTask;
 import com.feemung.quoraspider.spider.fetcher.ChromeDriverFetcher;
+import com.feemung.quoraspider.spider.login.Login;
+import com.feemung.quoraspider.spider.login.LoginWebDriverUtils;
 import com.feemung.quoraspider.spider.parse.quora.HomeHtmlParser;
 import com.feemung.quoraspider.spider.parse.quora.ProfileHtmlParser;
 import com.feemung.quoraspider.spider.queue.MemoryQueue;
@@ -19,9 +22,13 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.util.*;
 import java.util.List;
 
@@ -29,73 +36,28 @@ public class Main {
 
 
 
-/**
- *
- [main] .isWait(QuoraProfileDefaultHtmlWebDriverUtils.java:65)>>>>第171次加载了1141个内容（内容总共有1133个）
- [main] .isWait(QuoraProfileDefaultHtmlWebDriverUtils.java:101)>>>>加载完成,加载了1133个，总共1133个内容
- [main] .get(ChromeDriverFetcher.java:193)>>>>1113定位耗时3928
- [main] .get(ChromeDriverFetcher.java:193)>>>>1114定位耗时6228
- [main] .get(ChromeDriverFetcher.java:193)>>>>1115定位耗时8087
- [main] .get(ChromeDriverFetcher.java:193)>>>>1116定位耗时10443
- [main] .get(ChromeDriverFetcher.java:266)>>>>加载完数据，耗时2944908
- [main] .get(ChromeDriverFetcher.java:293)>>>>耗时218348毫秒检验，点击拉取数据失败共有30
- [main] .get(ChromeDriverFetcher.java:293)>>>>耗时102882毫秒检验，点击拉取数据失败共有0
- [main] .get(ChromeDriverFetcher.java:293)>>>>耗时94911毫秒检验，点击拉取数据失败共有0
- [main] .saveFile(FileUtils.java:49)>>>>pt3.html文件已经保存在了/Users/feemung/Desktop/question/pt3.html
- [main] .main3(Main.java:125)>>>>yongshi=3404378
- *
-
- [main] .main(Main.java:208)>>>>总共采集用户共计 size=231983
- [main] .main(Main.java:209)>>>>每个用户的关注用户加起来共计672347
- [main] .main(Main.java:210)>>>>完整采集关注用户的共计1691
- [main] .main(Main.java:211)>>>>采集用户的文章共计1323399
- [main] .main(Main.java:212)>>>>超过1000个答案的用户共计338
- [main] .main(Main.java:213)>>>>被关注的人数共计18421892
- [main] .main(Main.java:229)>>>>关注超过1000人共计5403
- [main] .main(Main.java:230)>>>>关注人数少于1000人共计226580
- [main] .main(Main.java:231)>>>>关注超过1000的用户占总用户的比例2.32905%
- [main] .main(Main.java:243)>>>>关注超过2000人共计2641
- [main] .main(Main.java:244)>>>>关注人数少于2000人共计229342
- [main] .main(Main.java:245)>>>>关注超过2000的用户占总用户的比例1.1384455%
-
-
- [main] .main(Main.java:226)>>>>总共采集用户共计 size=237562
- [main] .main(Main.java:227)>>>>每个用户的关注用户加起来共计701587
- [main] .main(Main.java:228)>>>>完整采集关注用户的共计1757
- [main] .main(Main.java:229)>>>>采集用户的文章共计1363908
- [main] .main(Main.java:230)>>>>超过1000个答案的用户共计351
- [main] .main(Main.java:231)>>>>被关注的人数共计18641348
- [main] .main(Main.java:232)>>>>=================
- [main] .main(Main.java:247)>>>>关注超过2000人共计2641
- [main] .main(Main.java:248)>>>>关注人数少于2000人共计234921
- [main] .main(Main.java:249)>>>>关注超过2000的用户占总用户的比例1.1117098%
- [main] .main(Main.java:256)>>>>关注超过1000人共计5415
- [main] .main(Main.java:257)>>>>关注人数少于1000人共计232147
- [main] .main(Main.java:258)>>>>关注超过1000的用户占总用户的比例2.2794049%
-
-
- [main] .main(Main.java:242)>>>>总共采集用户共计 size=243691
- [main] .main(Main.java:243)>>>>每个用户的关注用户加起来共计729580
- [main] .main(Main.java:244)>>>>完整采集关注用户的共计1800
- [main] .main(Main.java:245)>>>>采集用户的文章共计1401834
- [main] .main(Main.java:246)>>>>超过1000个答案的用户共计356
- [main] .main(Main.java:247)>>>>被关注的人数共计18801941
- [main] .main(Main.java:248)>>>>=================
- [main] .main(Main.java:249)>>>>=================
- [main] .main(Main.java:250)>>>>=================
- [main] .main(Main.java:263)>>>>关注超过2000人共计5417
- [main] .main(Main.java:264)>>>>关注人数少于1000人共计238274
- [main] .main(Main.java:265)>>>>关注超过1000的用户占总用户的比例2.222897%
- [main] .main(Main.java:231)>>>>关注超过2000人共计2642
- [main] .main(Main.java:232)>>>>关注人数少于2000人共计241049
- [main] .main(Main.java:233)>>>>关注超过2000的用户占总用户的比例1.0841599%
- * */
-
 
     private static LogFM logFM=LogFM.getInstance(Main.class);
     public static void main(String args[]) throws Exception {
-        Map<String,Integer> map=new TreeMap<>();
-        logFM.d(map.get("nu"));
+        start();
+    }
+    public static void main5() throws Exception {
+        NotVisitedTableSQLUtils notVisitedTableSQLUtils=NotVisitedTableSQLUtils.getInstance();
+        notVisitedTableSQLUtils.connectionMysql();
+        UserInfoSQLUtils userInfoSQLUtils=UserInfoSQLUtils.getInstance();
+        userInfoSQLUtils.connectionMysql();
+        ArrayList<UserInfo> userInfos=userInfoSQLUtils.getAllData();
+        Iterator<UserInfo> iterator=userInfos.iterator();
+        while (iterator.hasNext()){
+            UserInfo user=iterator.next();
+            String url="https://www.quora.com/profile/"+user.getRealUid();
+            HTMLTask task=new HTMLTask();
+            task.setURL(url);
+            task.setPriority(Integer.valueOf(user.getFollowersCount()));
+            task.setSaveDate(TimeStamp.defaultTimeFormat(new Date()));
+            notVisitedTableSQLUtils.addTask(task);
+        }
+
     }
     public static void main2(String args[]) throws Exception {
         Element elemenl = Jsoup.parse(FileUtils.readFile("answer4.html"));
@@ -134,7 +96,7 @@ public class Main {
         defaultMaskMaster.start();
         Task task = new HTMLTask();
         //task.setURL("https://www.quora.com/profile/Dushka-Zapata");
-        task.setURL("https://www.quora.com/profile/Alex-Suchman");
+        task.setURL("https://www.quora.com/profile/Kevin-Systrom/following");
 
         defaultMaskMaster.executeTasks(task);
 
