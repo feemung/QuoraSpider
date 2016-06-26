@@ -25,18 +25,18 @@ public class QuoraWebDriverExecute {
             if (moreEl.isDisplayed()) {
                 try {
 
-                    logFM.i("--判断耗时", System.currentTimeMillis() - c);
+                   // logFM.i("--判断耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
                     itemPoint = moreEl.getLocation();
-                    logFM.i("---获取位置耗时", System.currentTimeMillis() - c);
+                    //logFM.i("---获取位置耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
                     ((JavascriptExecutor)driver).executeScript("javascript:window.scroll( 0," + String.valueOf(itemPoint.getY() - 60) + ");");
-                    logFM.i("---移动位置耗时", System.currentTimeMillis() - c);
+                    //logFM.i("---移动位置耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
 
                     moreEl.click();
 
-                    logFM.i("---点击moreEle耗时", System.currentTimeMillis() - c);
+                    //logFM.i("---点击moreEle耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
 
                     if(isWaitLoad){

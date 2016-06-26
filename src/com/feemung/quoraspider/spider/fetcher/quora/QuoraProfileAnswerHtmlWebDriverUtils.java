@@ -20,7 +20,7 @@ import java.util.List;
 public class QuoraProfileAnswerHtmlWebDriverUtils {
     private  LogFM logFM=LogFM.getInstance(QuoraProfileAnswerHtmlWebDriverUtils.class);
     private RemoteWebDriver driver;
-    private int upvoteCount=500;//超过该数值会点击more链接
+    private int upvoteCount=300;//超过该数值会点击more链接
     private boolean upvoteCountFilter=true;
     public QuoraProfileAnswerHtmlWebDriverUtils(RemoteWebDriver driver){
         this.driver=driver;
@@ -122,20 +122,20 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
 
             while (flag) {
-                logFM.i("==============");
+              //  logFM.i("==============");
                 long c=System.currentTimeMillis();
                 flag =isWait();
-                logFM.d("iswait 耗时", System.currentTimeMillis() - c);
+              //  logFM.d("iswait 耗时", System.currentTimeMillis() - c);
                 c=System.currentTimeMillis();
                 List<WebElement> itemList=driver.findElementsByXPath("//div[@class='layout_3col_center']//div[@class='pagedlist_item']");
 
-                logFM.d("获得itemlist 耗时",System.currentTimeMillis()-c);
+               // logFM.d("获得itemlist 耗时",System.currentTimeMillis()-c);
                 c=System.currentTimeMillis();
                 int size=itemList.size();
                 if(size==lastSize){
                     driver.executeScript("javascript:window.scroll( 0,document.body.scrollHeight);");
                     Thread.sleep(500);
-                    logFM.i("通过滑动到低进行拉取数据,包含数据条目＝",size);
+                  //  logFM.i("通过滑动到低进行拉取数据,包含数据条目＝",size);
                 }
 
                 lastSize=size;
@@ -143,37 +143,37 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
                 for(int m=count;m<size;m++){
                     c=System.currentTimeMillis();
                     long itemTime=System.currentTimeMillis();
-                    logFM.d("item=",m);
+                  //  logFM.d("item=",m);
 
                     WebElement  itemEl = itemList.get(m);
                     try {
-                    logFM.d("itemel 耗时", System.currentTimeMillis() - c);
+                 //  logFM.d("itemel 耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
                     count++;
                     WebElement upvoteCountEl = itemEl.findElement(
                                 By.xpath("./div/div/div/div/span/a[@action_click='AnswerUpvote']/span[@class='count']"));
                     int upvote = HtmlParserUtils.htmlCount(upvoteCountEl.getText());
 
-                    logFM.d("upvote 耗时", System.currentTimeMillis() - c);
+                 //   logFM.d("upvote 耗时", System.currentTimeMillis() - c);
                     c=System.currentTimeMillis();
                     if (upvote < this.upvoteCount) {
-                        logFM.d("没通过点赞数量筛选,赞同数＝",upvote);
+                     //   logFM.d("没通过点赞数量筛选,赞同数＝",upvote);
                         continue;
                     }
-                    logFM.d("通过点赞数量筛选,赞同数＝",upvote);
+                  //  logFM.d("通过点赞数量筛选,赞同数＝",upvote);
 
                         c=System.currentTimeMillis();
                         WebElement moreEl = itemEl.findElement(By.xpath(".//a[@class='more_link']"));
-                        logFM.d("moreEl 耗时", System.currentTimeMillis() - c);
+                      //  logFM.d("moreEl 耗时", System.currentTimeMillis() - c);
                         QuoraWebDriverExecute.clickMoreElement(driver, moreEl, false);
-                        logFM.i("------------------");
+                       // logFM.i("------------------");
                     }catch (Exception e){
                         //logFM.e(itemEl.getText());
                         //logFM.e(String.valueOf(count)+" 出错－－－－－－－－－－－－－");
                     }
-                    logFM.e(String.valueOf(m)+"-"+"item 耗时 "+String.valueOf(System.currentTimeMillis()-itemTime));
+                //    logFM.e(String.valueOf(m)+"-"+"item 耗时 "+String.valueOf(System.currentTimeMillis()-itemTime));
                 }
-                logFM.e("共用时"+String.valueOf(System.currentTimeMillis()-t)+"毫秒");
+             //   logFM.e("共用时"+String.valueOf(System.currentTimeMillis()-t)+"毫秒");
             }
 
         }catch (Exception e){
@@ -184,7 +184,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
         }
         logFM.i("加载完数据，耗时", System.currentTimeMillis() - time);
-
+        /*
         time=System.currentTimeMillis();
         List<WebElement> itemList = driver.findElementsByXPath("//div[@class='layout_3col_center']//div[@class='pagedlist_item']");
         ArrayList failedMoreWE = new ArrayList();
@@ -199,19 +199,19 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
                 if (upvote < this.upvoteCount) {
                     continue;
                 }
-                logFM.d("通过点赞数量筛选");
+//                logFM.d("通过点赞数量筛选");
                 WebElement moreEl = itemEl.findElement(By.xpath(".//a[@class='more_link']"));
                 if(QuoraWebDriverExecute.clickMoreElement(driver, moreEl, false)){
                     failedMoreWE.add(itemEl);
                 }
-                logFM.i("------------------");
+               // logFM.i("------------------");
             }catch (Exception e){
                 failedMoreWE.add(itemEl);
             }
         }
 
         logFM.i("耗时", System.currentTimeMillis() - time, "毫秒检验，点击拉取数据失败共有", failedMoreWE.size());
-
+*/
 
     }
     private int lastSize=0;
@@ -226,7 +226,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
         int loadItemCount=pagedListElement.size();
 
-        if(itemSum==0||loadItemCount>5000){
+        if(itemSum==0||loadItemCount>2000){
             return false;
         }
         update++;
