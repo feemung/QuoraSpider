@@ -163,7 +163,7 @@ public class HTMLWorker implements Worker {
         if(sqlNotVisitedTable.isVisited(task)) {
             sqlNotVisitedTable.remove(task);
         }
-        System.exit(-1);
+       // System.exit(-1);
     }
     private void addUrl(Data data){
         List<Task> list=data.getUrlList();

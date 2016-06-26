@@ -56,12 +56,14 @@ public class LoginWebDriverUtils {
         logFM.d("登陆成功");
     }
     public static void defaultFormLogin(WebDriver driver)throws Exception{
-
+        logFM.d("into");
+      //  WebElement loginEln=driver.findElement(By.xpath("[class='regular_login']"));
         WebElement loginEln=driver.findElement(By.className("regular_login"));
-
+        logFM.d("loginEln=",loginEln);
         WebElement user = loginEln
                 .findElement(By.name("email"));
         //.findElement(By.xpath("//input[@name='email']"));
+        logFM.d("user=",user);
         user.clear();
         user.sendKeys("feemung@163.com");
         WebElement password = loginEln.findElement(By
