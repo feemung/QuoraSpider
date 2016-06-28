@@ -31,6 +31,7 @@ public class UserInfo {
     private String answerViewsLast30Days;
     private String answerViewsAllTime;
     private String saveDate;
+    private String visitAnswerLastDate;
 
     public UserInfo(){
 
@@ -196,6 +197,14 @@ public class UserInfo {
         this.saveDate = saveDate;
     }
 
+    public String getVisitAnswerLastDate() {
+        return visitAnswerLastDate;
+    }
+
+    public void setVisitAnswerLastDate(String visitAnswerLastDate) {
+        this.visitAnswerLastDate = visitAnswerLastDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -240,6 +249,7 @@ public class UserInfo {
                 ", answerViewsLast30Days='" + answerViewsLast30Days + '\'' +
                 ", answerViewsAllTime='" + answerViewsAllTime + '\'' +
                 ", saveDate='" + saveDate + '\'' +
+                ", visitAnswerLastDate='" + visitAnswerLastDate + '\'' +
                 '}';
     }
 }

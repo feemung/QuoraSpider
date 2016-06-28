@@ -89,6 +89,7 @@ public class ProfileHtmlParser implements Parser{
 
         if(task.getURL().matches("^https://www\\.quora\\.com/profile/[\\w-]+$")){
             userInfo.setAnswerMap(parserAnswers(centerElement));
+            userInfo.setVisitAnswerLastDate(TimeStamp.defaultTimeFormat(new Date()));
         }else if(task.getURL().matches("^https://www\\.quora\\.com/profile/[\\w-]+/questions$")){
             userInfo.setQuestionMap(parserQuestions(centerElement));
         }else if(task.getURL().matches("^https://www\\.quora\\.com/profile/[\\w-]+/followers$")){
@@ -132,16 +133,22 @@ public class ProfileHtmlParser implements Parser{
 
             //logFM.i(answer);
             if(answer==null){
+
                 continue;
             }
-            answerList.add(answer);
+            questionLinkMap.put(answer.getQuestion(), answer.getUpvotersCount());
 
-            questionLinkMap.put(answer.getQuestion(),answer.getUpvotersCount());
+
             String url=baseUrl+"/"+answer.getQuestion();
             Task t=new HTMLTask();
             t.setURL(url);
             taskList.add(t);
+            if(answer.getContent()!=null){
+                answerList.add(answer);
+            }
+
         }
+        logFM.d("questionLinkMap.size()= ",questionLinkMap.size());
         return questionLinkMap;
     }
     private HashMap<String,Integer> parserQuestions(Element centerElement){
@@ -235,11 +242,12 @@ public class ProfileHtmlParser implements Parser{
         return parserFollowing(centerElement);
     }
     public  void test(){
+        logFM.stopFlag=false;
         task=new HTMLTask();
         task.setURL("https://www.quora.com/profile/Alex-Suchman");
        // String baseUrl= RegexParser.parse(task.getURL(), "[a-z]+://[^/]+");
 
-        Element pageElement=Jsoup.parse(FileUtils.readFile("answer3.html"));
+        Element pageElement=Jsoup.parse(FileUtils.readFile("a.html"));
         Element centerElement=pageElement.getElementsByAttributeValueMatching("class", "layout_[\\w]+_center").first();
        // logFM.d(centerElement.text());
         HTMLContent content=new HTMLContent();

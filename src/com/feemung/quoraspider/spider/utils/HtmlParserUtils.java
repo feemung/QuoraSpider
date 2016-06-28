@@ -12,7 +12,7 @@ public class HtmlParserUtils {
             count = (int)temp;
 
         }else if(countStr.contains("m")){
-            countStr=countStr.replace("k","");
+            countStr=countStr.replace("m","");
             float temp=Float.valueOf(countStr)*1000000;
             count = (int)temp;
 

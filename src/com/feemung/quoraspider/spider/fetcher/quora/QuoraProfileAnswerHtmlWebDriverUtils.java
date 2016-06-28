@@ -10,9 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.lang.reflect.Executable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by feemung on 16/5/23.
@@ -20,7 +18,7 @@ import java.util.List;
 public class QuoraProfileAnswerHtmlWebDriverUtils {
     private  LogFM logFM=LogFM.getInstance(QuoraProfileAnswerHtmlWebDriverUtils.class);
     private RemoteWebDriver driver;
-    private int upvoteCount=300;//超过该数值会点击more链接
+    private int upvoteCount=100;//超过该数值会点击more链接
     private boolean upvoteCountFilter=true;
     public QuoraProfileAnswerHtmlWebDriverUtils(RemoteWebDriver driver){
         this.driver=driver;
@@ -37,15 +35,98 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
         }
     }
-    public void waitRun(){
-        QuoraWebDriverExecute.clickUserFollow(driver.findElementByClassName("header"),1000);
-        if(upvoteCountFilter){
-            upvoteCountFilterClickMore();
-        }else {
-            clickAllMore();
-        }
+    public void waitRun()throws Exception{
+        QuoraWebDriverExecute.clickUserFollow(driver.findElementByClassName("header"), 1000);
+               if(upvoteCountFilter){
+                    upvoteCountFilterClickMore();
+                }else {
+                    clickAllMore();
+                }
+
+
     }
-    public void clickAllMore(){
+    public void waitRun2(){
+        QuoraWebDriverExecute.clickUserFollow(driver.findElementByClassName("header"), 1000);
+        List<String> resultList=new ArrayList<>();
+        try {
+            Map<String,Integer> map=downloadTopics();
+            Iterator<Map.Entry<String,Integer>> iter=map.entrySet().iterator();
+            while (iter.hasNext()){
+                Map.Entry<String,Integer> entry=iter.next();
+                String url=entry.getKey();
+                Integer count=entry.getValue();
+                driver.get(url);
+                init();
+                if(upvoteCountFilter){
+                     upvoteCountFilterClickMore();
+                }else {
+                    clickAllMore();
+                }
+                resultList.add(driver.getPageSource());
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public Map<String,Integer> downloadTopics()throws Exception{
+        long start=System.currentTimeMillis();
+        Map<String,Integer> map=new HashMap<>();
+        driver.get(driver.getCurrentUrl()+"/topics");
+        boolean run=true;
+        int loadItem=driver.findElements(By.className("pagedlist_item")).size();
+        long t=System.currentTimeMillis();
+        while (run){
+            driver.executeScript("javascript:window.scroll( 0,document.body.scrollHeight);");
+
+
+            Thread.sleep(1000);
+            int curLoadItem=driver.findElements(By.className("pagedlist_item")).size();
+            if(curLoadItem>loadItem){
+                loadItem=curLoadItem;
+                t=System.currentTimeMillis();
+                logFM.d("共加载了",curLoadItem);
+            }
+            if(System.currentTimeMillis()-t>10000){
+
+                driver.executeScript("javascript:window.scroll( 0,document.body.scrollHeight);");
+                WebElement loadEl=driver.findElement(By.className("pager_next"));
+                if(!loadEl.isDisplayed()){
+                    logFM.d("加载完成，共加载了",curLoadItem);
+                    break;
+                }
+            }
+            if(System.currentTimeMillis()-t>30000){
+                logFM.d("网络错误，未完全加载成功，共加载了",curLoadItem);
+                break;
+            }
+
+
+        }
+        List<WebElement> elementLIst=driver.findElements(By.className("pagedlist_item"));
+        Iterator<WebElement> iter=elementLIst.iterator();
+        int size=0;
+        while (iter.hasNext()){
+            WebElement itemEl=iter.next();
+            try {
+                WebElement el = itemEl.findElement(By.partialLinkText("Answer"));
+
+                logFM.d(el.getText());
+                String u = el.getAttribute("href");
+                int count = Integer.valueOf(RegexParser.parse(el.getText(), "[0-9]+"));
+                logFM.d(u, " :", count);
+                map.put(u, count);
+                size=size+count;
+            }catch (Exception e){
+
+            }
+        }
+                logFM.d("加载完成话题，耗时", System.currentTimeMillis() - start, ",size=", size);
+
+        return map;
+    }
+    public void clickAllMore()throws Exception{
 
         boolean flag=true;
         long time=System.currentTimeMillis();
@@ -80,6 +161,8 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
                 logFM.e("共用时"+String.valueOf(System.currentTimeMillis()-t)+"毫秒");
             }
 
+        }catch (LoadFailedException e){
+            throw e;
         }catch (Exception e){
 
             e.printStackTrace();
@@ -108,7 +191,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
 
     }
-    public void upvoteCountFilterClickMore(){
+    public void upvoteCountFilterClickMore()throws Exception{
 
         boolean flag=true;
         long time=System.currentTimeMillis();
@@ -176,6 +259,8 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
              //   logFM.e("共用时"+String.valueOf(System.currentTimeMillis()-t)+"毫秒");
             }
 
+        }catch (LoadFailedException e){
+            throw e;
         }catch (Exception e){
 
             e.printStackTrace();
@@ -184,7 +269,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
         }
         logFM.i("加载完数据，耗时", System.currentTimeMillis() - time);
-        /*
+
         time=System.currentTimeMillis();
         List<WebElement> itemList = driver.findElementsByXPath("//div[@class='layout_3col_center']//div[@class='pagedlist_item']");
         ArrayList failedMoreWE = new ArrayList();
@@ -211,7 +296,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
         }
 
         logFM.i("耗时", System.currentTimeMillis() - time, "毫秒检验，点击拉取数据失败共有", failedMoreWE.size());
-*/
+
 
     }
     private int lastSize=0;
@@ -220,7 +305,7 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
     private int itemSum=0;
     private long seeTime=0;
 
-    private boolean isWait(){
+    private boolean isWait()throws Exception{
 
         List<WebElement> pagedListElement=driver.findElements(By.className("pagedlist_item"));
 
@@ -239,8 +324,8 @@ public class QuoraProfileAnswerHtmlWebDriverUtils {
 
             }else {
                 logFM.e("网络出错，没有加载成功" + "加载了" + String.valueOf(loadItemCount) + "个内容（内容总共有" + String.valueOf(itemSum) + "个");
+                throw new LoadFailedException("网络出错，没有加载成功" + "加载了" + String.valueOf(loadItemCount) + "个内容（内容总共有" + String.valueOf(itemSum) + "个");
 
-                return false;
             }
         }
         if(itemSum>loadItemCount){

@@ -94,7 +94,16 @@ public class ChromeDriverFetcher {
         //driver = new ChromeDriver();
     }
     public String get(String url)throws Exception{
+        Set<String> windowSet=driver.getWindowHandles();
+        if(windowSet.size()>1) {
+            Iterator<String> iterator = windowSet.iterator();
+            for (int i = 0; i <windowSet.size()-1 ; i++){
+                driver.switchTo().window(iterator.next()).close();
 
+            }
+            driver.switchTo().window(iterator.next());
+            logFM.e("关闭了多余的网页");
+        }
         link=url;
         logFM.d("获取网页数据" + driver.getWindowHandle() + " " + driver);
 
@@ -122,8 +131,13 @@ public class ChromeDriverFetcher {
             QuoraQuestionHtmlWebDriverUtils waitDriver=new QuoraQuestionHtmlWebDriverUtils(driver);
             waitDriver.waitLoad();
         }else if(url.matches("^https://www\\.quora\\.com/profile/[\\w-]+$")){
+            long time=System.currentTimeMillis();
             QuoraProfileAnswerHtmlWebDriverUtils utils=new QuoraProfileAnswerHtmlWebDriverUtils(driver);
             utils.waitRun();
+
+            //QuoraProfileDefaultHtmlWebDriverUtils waitDriver=new QuoraProfileDefaultHtmlWebDriverUtils(driver);
+           // waitDriver.waitLoad();
+            logFM.i("haos shi ", System.currentTimeMillis() - time);
 
         }else if(url.matches("^https://www\\.quora\\.com/profile/[\\w-]+/questions$")){
             QuoraProfileDefaultHtmlWebDriverUtils waitDriver=new QuoraProfileDefaultHtmlWebDriverUtils(driver);

@@ -58,7 +58,7 @@ public class QuoraProfileDefaultHtmlWebDriverUtils {
         }
         update++;
         if((System.currentTimeMillis()-seeTime)>30000){
-            logFM.i("第",update,"次加载了",loadItemCount,"个内容（内容总共有",count,"个）");
+            logFM.i("第",update,"次耗时"+String.valueOf((System.currentTimeMillis()-start)/1000)+"秒加载了",loadItemCount,"个内容（内容总共有",count,"个）");
             //logFM.i("加载了", pagedListElement.size(), "个内容");
 
             seeTime=System.currentTimeMillis();
@@ -81,7 +81,8 @@ public class QuoraProfileDefaultHtmlWebDriverUtils {
 
             return true;
         }else {
-            loadItemCount=0;
+            //loadItemCount=0;
+            /*
             Iterator<WebElement> pagedIter=pagedListElement.iterator();
             while (pagedIter.hasNext()){
                 WebElement key=pagedIter.next();
@@ -91,6 +92,7 @@ public class QuoraProfileDefaultHtmlWebDriverUtils {
 
                 }
             }
+            */
             if(loadItemCount<count){
                 return true;
             }else {
@@ -103,7 +105,7 @@ public class QuoraProfileDefaultHtmlWebDriverUtils {
     }
     public void waitLoad(){
 
-
+        start=System.currentTimeMillis();
         seeTime=System.currentTimeMillis();
         for(int i=0;i< 2000; i++) {
             logFM.d("run i=", i);

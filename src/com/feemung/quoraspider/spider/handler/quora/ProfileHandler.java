@@ -9,6 +9,7 @@ import com.feemung.quoraspider.spider.entry.QuoraProfileHtmlData;
 import com.feemung.quoraspider.spider.entry.QuoraQuestionHtmlData;
 import com.feemung.quoraspider.spider.handler.WareHandler;
 import com.feemung.quoraspider.sql.AnswerSQL;
+import com.feemung.quoraspider.sql.CheckSQLUpdateData;
 import com.feemung.quoraspider.sql.QuestionMySQLUtils;
 import com.feemung.quoraspider.sql.UserInfoSQLUtils;
 
@@ -58,10 +59,18 @@ public class ProfileHandler extends WareHandler{
         List<Answer> answerList=data.getAnswerList();
         Iterator<Answer> iterator=answerList.iterator();
         while (iterator.hasNext()) {
-            answerSQL.update(iterator.next());
+            Answer answer=iterator.next();
+            if(!CheckSQLUpdateData.checkAnswer(answer)) {
+                logFM.e("数据库更新answer内容出错，"+answer.toString());
+            }
+                answerSQL.update(answer);
+
         }
 
        // logFM.e("成功更新用户数据"+data.getTask());
+        if(!CheckSQLUpdateData.checkUserInfo(userInfo)){
+            logFM.e("数据库更新answer内容出错，"+userInfo.toString());
+        }
         logFM.d(userInfo.toString());
         lock.unlock();
     }

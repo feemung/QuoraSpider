@@ -37,29 +37,31 @@ public class AnswerElementParser {
             }
             int viewCount=extractViewCount(answerHeaderElement);
             answer.setViewCount(viewCount);
-
+            try {
             String lastEditDate=extractLastEditDate(answerElement);
             answer.setLastEditDate(lastEditDate);
 
-            Element wordMapEl=answerElement.getElementsByAttributeValueMatching("id","__w2_[\\w]+__expanded").first().getElementsByClass("rendered_qtext").first();
+                Element wordMapEl = answerElement.getElementsByAttributeValueMatching("id", "__w2_[\\w]+__expanded").first().getElementsByClass("rendered_qtext").first();
 
-            answer.setContent(wordMapEl.html());
-            List<String> listWord=getWordList(wordMapEl);
-            answer.setAnswerSize(listWord.size());
-            answer.setWordMap(getWordMap(listWord));
-            answer.setContent(wordMapEl.html());
+                answer.setContent(wordMapEl.html());
+                List<String> listWord = getWordList(wordMapEl);
+                answer.setAnswerSize(listWord.size());
+                answer.setWordMap(getWordMap(listWord));
+                answer.setContent(wordMapEl.html());
+                answer.setSaveDate(TimeStamp.defaultTimeFormat(new Date()));
+            }catch (Exception e){
 
-            answer.setSaveDate(TimeStamp.defaultTimeFormat(new Date()));
+            }
 
             logFM.d(answer);
-            logFM.i(answer.getUpvotersCountStr(),"===",answer.getQuestion(),"  ",answer.getContent());
+            logFM.d(answer.getUpvotersCountStr(),"===",answer.getQuestion(),"  ",answer.getContent());
         }catch (Exception e){
             try {
                 //FileUtils.saveFile("answer" + TimeStamp.defaultTimeFormat(new Date()) + ".html", answerElement.html(), false);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-            //e.printStackTrace();
+            e.printStackTrace();
             return null;
         }
         //logFM.d(answer);
