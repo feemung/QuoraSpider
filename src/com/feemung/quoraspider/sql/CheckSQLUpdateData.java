@@ -11,6 +11,9 @@ public class CheckSQLUpdateData {
         if(answer.getQuestion()==null||answer.getQuestion().isEmpty()){
             return false;
         }
+        if(answer.getAnswerUser()==null||answer.getAnswerUser().isEmpty()){
+            return false;
+        }
         return true;
     }
     public static boolean checkUserInfo(UserInfo userInfo){
