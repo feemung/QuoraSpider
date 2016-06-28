@@ -57,8 +57,8 @@ public class UserInfoSQLUtils extends SQLBase{
         "followersCount VARCHAR(255),"+
         "followingCount VARCHAR(255),"+
         "answerCount VARCHAR(255),"+
-        "questionCount VARCHAR(255)"+
-
+        "questionCount VARCHAR(255),"+
+         "visitAnswerLastDate VARCHAR(20)"+
                 ")";
 
 
